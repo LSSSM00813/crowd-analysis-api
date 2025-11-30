@@ -1,91 +1,121 @@
-| テーブル名 | 役割 |
-| ---------- | ---- |
-|            |      |
+| TABLE                                                    | テーブル名           |
+| -------------------------------------------------------- | -------------------- |
+| **[account](#table-account)**                            | アカウント管理マスタ |
+| **[corporate](#table-corporate)**                        | 企業マスタ           |
+| **[user](#table-user)**                                  | ユーザーマスタ       |
+| **[store](#table-store)**                                | 店舗マスタ           |
+| **[crowd_log](#table-crowd_log)**                       | 混雑ログマスタ       |
+| **[store_crowd_setting](#table-store_crowd_setting)**    | 混雑設定マスタ       |
+| **[favorite_store](#table-favorite_store)**              | お気に入り店舗マスタ |
+| **[store_business_hours](#table-store_business_hours)** | 営業時間マスタ       |
+| **[store_holiday](#table-store_holiday)**                | 休日マスタ           |
+| **[store_special_open](#table-store_special_open)**     | 特別営業テーブル     |
 
 
+### [TABLE] account
+| FIELD_ID        | 項目名                     | 型       | SIZE | 主キー | 制約 |
+| --------------- | -------------------------- | -------- | :--: | :----: | :--: |
+| account_id      | アカウントコード           | int      |      |   1    |  NN  |
+| email           | メールアドレス             | nvarchar |  50  |        |  NN  |
+| password        | パスワード                 | nvarchar |  50  |        |  NN  |
+| name            | 表示名(ユーザー名、企業名) | nvarchar |  50  |        |  NN  |
+| state           | アカウント状態             | int      |      |        |  NN  |
+| created_at      | 作成日時                   | datetime |      |        |  NN  |
+| updated_at      | 更新日時                   | datetime |      |        |  NN  |
+| latest_login_at | 最終ログイン日時           | datetime |      |        |  NN  |
 
-### アカウント管理テーブル
-| カラム名        | 型       | 説明                       |
-| --------------- | -------- | -------------------------- |
-| account_id (PK) | INT      | アカウントID               |
-| email           | VARCHAR  | メールアドレス（ユニーク） |
-| password_hash   | VARCHAR  | ハッシュ化パスワード       |
-| created_at      | DATETIME | 作成日時                   |
-| updated_at      | DATETIME | 更新日時                   |
-| last_login_at   | DATETIME | 最終ログイン日時           |
+```
+■アカウント状態
+　0:無効、1:有効、2:削除済み？
+```
 
-### 企業テーブル
-| カラム名        | 型      | 説明         |
-| --------------- | ------- | ------------ |
-| company_id (PK) | INT     | 企業ID       |
-| account_id (FK) | INT     | アカウントID |
-| company_name    | VARCHAR | 企業名       |
-| phone_number    | VARCHAR | 電話番号     |
-| address         | VARCHAR | 住所         |
+### [TABLE] corporate
+| FIELD_ID     | 項目名           | 型       | SIZE | 主キー | 制約 |
+| ------------ | ---------------- | -------- | :--: | :----: | :--: |
+| company_id   | 企業コード       | int      |      |   1    |  NN  |
+| account_id   | アカウントコード | int      |      |        |  NN  |
+| address      | 住所             | nvarchar | 100  |        |  NN  |
+| phone_number | 電話番号         | nvarchar |  30  |        |  NN  |
 
 
-## ユーザーテーブル
-| カラム名        | 型      | 説明                      |
-| --------------- | ------- | ------------------------- |
-| user_id (PK)    | INT     | ユーザーID                |
-| account_id (FK) | INT     | アカウントID              |
-| username        | VARCHAR | ユーザー名                |
-| gender_code     | CHAR(1) | 性別コード（M/Fなど）     |
-| birth_date      | DATE    | 生年月日                  |
-| prefecture_code | VARCHAR | 都道府県コード（ISO準拠） |
+### [TABLE] user
+| FIELD_ID           | 項目名           | 型       | SIZE | 主キー | 制約 |
+| ------------------ | ---------------- | -------- | :--: | :----: | :--: |
+| user_id            | ユーザーコード   | int      |      |   1    |  NN  |
+| account_id (FK)    | アカウントコード | int      |      |        |  NN  |
+| gender             | 性別             | int      |      |        |  NN  |
+| birth_date         | 生年月日         | datetime |      |        |  NN  |
+| prefecture_id (FK) | 都道府県コード   | int      |      |        |  NN  |
 
-### store 店舗情報
-| カラム名        | 型      | 説明                       |
-| --------------- | ------- | -------------------------- |
-| store_id (PK)   | INT     | 店舗ID                     |
-| company_id (FK) | INT     | 企業ID                     |
-| account_id (FK) | INT     | アカウントID               |
-| store_name      | VARCHAR | 店舗名                     |
-| address         | VARCHAR | 住所                       |
-| phone_number    | VARCHAR | 電話番号                   |
-| category        | VARCHAR | 店舗カテゴリ（カフェ等）   |
-| image_url       | VARCHAR | 店舗画像URL                |
-| access_info     | VARCHAR | アクセス情報（最寄駅など） |
+```
+■性別
+ 0:男性、1:女性、2:その他
+```
 
-### store_crowed_log (店舗混雑ログ)
-| カラム名      | 型       | 説明               |
-| ------------- | -------- | ------------------ |
-| log_id (PK)   | INT      | ログID             |
-| user_id (FK)  | INT      | ユーザーID         |
-| store_id (FK) | INT      | 店舗ID             |
-| event_type    | ENUM     | 入店/退店 (IN/OUT) |
-| event_at      | DATETIME | 入退店時刻         |
+### [TABLE] store
+| FIELD_ID        | 項目名           | 型       | SIZE | 主キー | 制約 |
+| --------------- | ---------------- | -------- | :--: | :----: | :--: |
+| store_id        | 店舗コード       | int      |      |   1    |  NN  |
+| company_id      | 企業コード       | int      |      |        |  NN  |
+| account_id (FK) | アカウントコード | int      |      |        |  NN  |
+| address         | 住所             | nvarchar | 100  |        |  NN  |
+| phone_number    | 電話番号         | nvarchar |  30  |        |  NN  |
 
-### store_crowed_setting (店舗混雑設定)
-| カラム名          | 型  | 説明      |
-| ----------------- | --- | --------- |
-| setting_id (PK)   | INT | 設定ID    |
-| store_id (FK)     | INT | 店舗ID    |
-| capacity          | INT | 定員数    |
-| threshold_percent | INT | 閾値（%） |
+### [TABLE] crowd_log
+| FIELD_ID   | 項目名         | 型       | SIZE | 主キー | 制約 |
+| ---------- | -------------- | -------- | :--: | :----: | :--: |
+| log_id     | 混雑ログコード | int      |      |   1    |  NN  |
+| store_id   | 店舗コード     | int      |      |        |  NN  |
+| user_id    | ユーザーコード | int      |      |        |  NN  |
+| event_type | 行動区分       | int      |      |        |  NN  |
+| event_at   | 発生時刻       | datetime |      |        |  NN  |
 
-### favorite_store (お気に入り店舗)
-|カラム名|型|説明|
-|---|---|---|
-|user_id (PK, FK)|INT|ユーザーID|
-|store_id (PK, FK)|INT|店舗ID|
-|registered_at|DATETIME|お気に入り登録時刻|
+```
+■行動区分  
+　0:入店、1:退店、(2:強制入店?、3:強制退店?)
+```
 
-### store_hour (営業時間テーブル)
-| カラム名        | 型      | 説明           |
-| --------------- | ------- | -------------- |
-| hours_id (PK)   | INT     | 営業時間ID     |
-| store_id (FK)   | INT     | 店舗ID         |
-| day_of_week     | ENUM    | 曜日 (月〜日)  |
-| open_time       | TIME    | 開店時刻       |
-| close_time      | TIME    | 閉店時刻       |
-| last_entry_time | TIME    | 最終入場時刻   |
-| is_next_day     | BOOLEAN | 翌日営業フラグ |
+### [TABLE] store_crowd_setting
+| FIELD_ID          | 項目名     | 型    | SIZE | 主キー | 制約 |
+| ----------------- | ---------- | ----- | :--: | :----: | :--: |
+| store_id          | 店舗コード | int   |      |   1    |  NN  |
+| setting_id        | 設定ID     | int   |      |   2    |  NN  |
+| capacity          | 定員数     | int   |      |        |  NN  |
+| threshold_percent | 閾値(%)    | float |      |        |  NN  |
 
-### store_holiday (特別休日)
-| カラム名        | 型      | 説明     |
-| --------------- | ------- | -------- |
-| holiday_id (PK) | INT     | 休日ID   |
-| store_id (FK)   | INT     | 店舗ID   |
-| holiday_date    | DATE    | 休日日付 |
-| reason          | VARCHAR | 休業理由 |
+### [TABLE] favorite_store
+| FIELD_ID      | 項目名             | 型       | SIZE | 主キー | 制約 |
+| ------------- | ------------------ | -------- | :--: | :----: | :--: |
+| user_id       | ユーザーコード     | int      |      |   1    |  NN  |
+| store_id      | 店舗コード         | int      |      |   2    |  NN  |
+| registered_at | お気に入り登録日時 | datetime |      |        |  NN  |
+
+### [TABLE] store_business_hours
+| FIELD_ID        | 項目名           | 型      | SIZE | 主キー | 制約 |
+| --------------- | ---------------- | ------- | :--: | :----: | :--: |
+| store_id        | 店舗コード       | int     |      |   1    |  NN  |
+| hours_id        | 営業時間コード   | int     |      |   2    |  NN  |
+| day_of_week     | 曜日             | int     |      |        |  NN  |
+| open_time       | 開店時刻         | time    |      |        |  NN  |
+| close_time      | 閉店時刻         | time    |      |        |  NN  |
+| last_entry_time | 最終入店可能時刻 | time    |      |        |  NN  |
+| is_next_day     | 翌日営業フラグ   | boolean |      |        |  NN  |
+
+### [TABLE] store_holiday
+| FIELD_ID   | 項目名         | 型       | SIZE | 主キー | 制約 |
+| ---------- | -------------- | -------- | :--: | :----: | :--: |
+| store_id   | 店舗コード     | int      |      |   1    |  NN  |
+| holiday_id | 特別休業コード | int      |      |   2    |  NN  |
+| start      | 休業開始日付   | date     |      |        |  NN  |
+| end        | 休業終了日付   | date     |      |        |  NN  |
+| reason     | 休業理由       | nvarchar | 100  |        |  NN  |
+
+### [TABLE] store_special_open
+| FIELD_ID           | 項目名           | 型      | SIZE | 主キー | 制約 |
+| ------------------ | ---------------- | ------- | :--: | :----: | :--: |
+| store_id           | 店舗コード       | int     |      |   1    |  NN  |
+| special_holiday_id | 特別営業コード   | int     |      |   2    |  NN  |
+| open_time          | 開店時刻         | time    |      |        |  NN  |
+| close_time         | 閉店時刻         | time    |      |        |  NN  |
+| last_entry_time    | 最終入店可能時刻 | time    |      |        |  NN  |
+| is_next_day        | 翌日営業フラグ   | boolean |      |        |  NN  |
