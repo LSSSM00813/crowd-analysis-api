@@ -4,7 +4,7 @@ export class Account {
   public password: string;
   public name: string;
   public state: AccountStatus;
-  public crated_at: Date;
+  public created_at: Date;
   public updated_at: Date;
   public latest_login_at: Date;
 
@@ -14,7 +14,7 @@ export class Account {
     this.password = sorce.password;
     this.name = sorce.name;
     this.state = sorce.state;
-    this.crated_at = sorce.crated_at;
+    this.created_at = sorce.created_at;
     this.updated_at = sorce.updated_at;
     this.latest_login_at = sorce.latest_login_at;
   }

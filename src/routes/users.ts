@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
-import { DBAccessor } from "../util/DBAccessor";
+import { DBAccessorTemp } from "../util/DBAccessorTemp";
+import { DBAccountAccessor } from "../util/DBAccountAccessor";
 
 const userRouter = Router();
 
@@ -12,12 +13,18 @@ userRouter.get("/", (req: Request, res: Response) => {
 userRouter.get("/DBTest", (req: Request, res: Response) => {
   console.log("DBTest called");
 
-  DBAccessor.selectAll("account").then((results) => {
-    res.json(results);
+  DBAccountAccessor.selectAll().then((accounts) => {
+    res.json(accounts);
   }).catch((error) => {
-    console.log(error);
     res.status(500).json({ error: error.message });
   });
+
+  // DBAccessor.selectAll("account").then((results) => {
+  //   res.json(results);
+  // }).catch((error) => {
+  //   console.log(error);
+  //   res.status(500).json({ error: error.message });
+  // });
 });
 
 // ユーザー詳細取得
